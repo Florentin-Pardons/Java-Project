@@ -6,6 +6,7 @@ import javax.swing.border.EmptyBorder;
 import be.pardons.POJO.Administrateur;
 import be.pardons.POJO.Jeu;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -104,32 +105,37 @@ public class Jeu_Modifier extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 								
 				String nom = txtNom.getText().toString();
-				int tarif = Integer.parseInt(txtTarif.getText().toString());
+				String tarif = txtTarif.getText().toString();
+				
+				//Convertir le string en date
 				Date dateCrea = null;
 				try {
 					dateCrea = formatter.parse(txtDateSortie.getText().toString());
 				} catch (ParseException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
+					JOptionPane.showMessageDialog(rootPane, "Mauvais format de date. Requis : 01/01/2001", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 				}
 				String dev = txtDev.getText().toString();
 				String editeur = txtEditeur.getText().toString();
 				
-				if(!nom.isEmpty() && tarif > 0 && dateCrea != null && !dev.isEmpty() && !editeur.isEmpty())
+				if(!nom.isEmpty() && !tarif.isEmpty() && Integer.parseInt(tarif) > 0 && dateCrea != null && !dev.isEmpty() && !editeur.isEmpty())
 				{
 					try
 					{
 						jeu.SetNom(nom);
-						jeu.SetTarif(tarif);
+						jeu.SetTarif(Integer.parseInt(tarif));
 						jeu.SetDatesortie(dateCrea);
 						jeu.SetDeveloppeur(dev);
 						jeu.SetEditeur(editeur);
 						
 						if(jeu.Update() == true){
+							JOptionPane.showMessageDialog(rootPane, "Jeu mis a jour", "Information : ", JOptionPane.INFORMATION_MESSAGE);
 							Jeu_Gestion p = new Jeu_Gestion(admin);
 							p.setVisible(true);
 							dispose();							
 						}
+						else
+							JOptionPane.showMessageDialog(rootPane, "Erreur system : echec de l'update", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 					}
 					catch(Exception err)
 					{
@@ -137,7 +143,7 @@ public class Jeu_Modifier extends JFrame {
 					}
 				}
 				else
-					System.out.println("erreur");
+					JOptionPane.showMessageDialog(rootPane, "Erreur d'encodage dans le formulaire", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 			}
 		});
 		btnValider.setBounds(312, 213, 89, 23);
