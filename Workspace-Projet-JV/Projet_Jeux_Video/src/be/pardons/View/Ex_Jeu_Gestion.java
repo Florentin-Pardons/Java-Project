@@ -32,10 +32,6 @@ public class Ex_Jeu_Gestion extends JFrame {
 		
 		//create the model and add elements
 		listModelEx_Jeu = new DefaultListModel<>();
-		/*for (Ex_Jeu num : Ex_Jeu.List(joueur))  
-        { 
-			listModelEx_Jeu.addElement(num);
-        }*/
 		
 		for (Ex_Jeu num : joueur.GetListJeu())  
         { 
@@ -57,7 +53,7 @@ public class Ex_Jeu_Gestion extends JFrame {
             public void mouseClicked(java.awt.event.MouseEvent event) {
             	if (event.getClickCount() == 2) {
             		Jeu jeu = list.getSelectedValue().GetJeu();
-            		JOptionPane.showMessageDialog(rootPane, jeu.toString(), "Information Jeu : ", JOptionPane.INFORMATION_MESSAGE);
+            		JOptionPane.showMessageDialog(rootPane, jeu.message(), "Information Jeu : ", JOptionPane.INFORMATION_MESSAGE);
             	  }
             }
         });
@@ -81,7 +77,6 @@ public class Ex_Jeu_Gestion extends JFrame {
 		
 		//btn modifier
 		btnModifier = new JButton("Modifier");
-		btnModifier.setEnabled(false);
 		btnModifier.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				Ex_Jeu ex_jeu = list.getSelectedValue();
@@ -90,10 +85,19 @@ public class Ex_Jeu_Gestion extends JFrame {
 				{
 					try
 					{
-						ex_jeu.Update(); //
-						Ex_Jeu_Gestion p = new Ex_Jeu_Gestion(joueur);
-						p.setVisible(true);
-						dispose();
+						if(ex_jeu.GetDispo() == true)
+							ex_jeu.SetDispo(false);
+						else
+							ex_jeu.SetDispo(true);
+						
+						if(ex_jeu.Update()==true)
+						{
+							Ex_Jeu_Gestion p = new Ex_Jeu_Gestion(joueur);
+							p.setVisible(true);
+							dispose();
+						}
+						else
+							JOptionPane.showMessageDialog(rootPane, "Erreur system : echec de l'update", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 					}
 					catch(Exception err)
 					{
@@ -101,7 +105,7 @@ public class Ex_Jeu_Gestion extends JFrame {
 					}
 				}
 				else
-					System.out.println("ereur");
+					JOptionPane.showMessageDialog(rootPane, "Aucun exemplaire selectionné", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 			}
 		});
 		btnModifier.setBounds(164, 155, 89, 23);
@@ -117,14 +121,18 @@ public class Ex_Jeu_Gestion extends JFrame {
 				{
 					try
 					{
-						ex_jeu.Delete();
-						
-						joueur.GetListJeu().clear();
-						joueur.SetListJeu(Ex_Jeu.List(joueur)); //
-						
-						Ex_Jeu_Gestion p = new Ex_Jeu_Gestion(joueur);
-						p.setVisible(true);
-						dispose();
+						if(ex_jeu.Delete()==true)
+						{
+							joueur.GetListJeu().clear();
+							joueur.SetListJeu(Ex_Jeu.List(joueur));
+							
+							JOptionPane.showMessageDialog(rootPane, "Exemplaire delete", "Information : ", JOptionPane.INFORMATION_MESSAGE);
+							Ex_Jeu_Gestion p = new Ex_Jeu_Gestion(joueur);
+							p.setVisible(true);
+							dispose();
+						}
+						else
+							JOptionPane.showMessageDialog(rootPane, "Erreur system : echec du delete", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 					}
 					catch(Exception err)
 					{
@@ -132,7 +140,7 @@ public class Ex_Jeu_Gestion extends JFrame {
 					}
 				}
 				else
-					System.out.println("ereur");
+					JOptionPane.showMessageDialog(rootPane, "Aucun exemplaire selectionné", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 			}
 		});
 		btnSupprimer.setBounds(304, 155, 89, 23);
