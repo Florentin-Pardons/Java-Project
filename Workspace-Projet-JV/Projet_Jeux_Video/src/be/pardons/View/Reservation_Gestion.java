@@ -58,7 +58,7 @@ public class Reservation_Gestion extends JFrame {
 	            public void mouseClicked(java.awt.event.MouseEvent event) {
 	            	if (event.getClickCount() == 2) {
 	            		Jeu jeu = list.getSelectedValue().GetJeu();
-	            		JOptionPane.showMessageDialog(rootPane, jeu.toString(), "Information Jeu : ", JOptionPane.INFORMATION_MESSAGE);
+	            		JOptionPane.showMessageDialog(rootPane, jeu.message(), "Information Jeu : ", JOptionPane.INFORMATION_MESSAGE);
 	            	  }
 	            }
 	        });
@@ -82,8 +82,10 @@ public class Reservation_Gestion extends JFrame {
 		
 		//btn modifier
 		btnModifierReservation = new JButton("Modifier");
+		btnModifierReservation.setEnabled(false);
 		btnModifierReservation.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				//
 			}
 		});
 		btnModifierReservation.setBounds(171, 192, 104, 23);
@@ -99,15 +101,17 @@ public class Reservation_Gestion extends JFrame {
 				{
 					try
 					{
-						res.Delete();
-						
-						//Refresh
-						joueur.GetListRes().clear();
-						joueur.SetListRes(Reservation.List(joueur));
-						
-						Reservation_Gestion p = new Reservation_Gestion(joueur);
-						p.setVisible(true);
-						dispose();
+						if(res.Delete() == true)
+						{						
+							//Refresh
+							joueur.GetListRes().clear();
+							joueur.SetListRes(Reservation.List(joueur));
+							
+							JOptionPane.showMessageDialog(rootPane, "Reservation Supprimée", "Information : ", JOptionPane.INFORMATION_MESSAGE);
+							Reservation_Gestion p = new Reservation_Gestion(joueur);
+							p.setVisible(true);
+							dispose();
+						}
 					}
 					catch(Exception err)
 					{
@@ -115,7 +119,7 @@ public class Reservation_Gestion extends JFrame {
 					}
 				}
 				else
-					System.out.println("ereur");
+					JOptionPane.showMessageDialog(rootPane, "Aucune reservation selectionnée", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 			}
 		});
 		btnSupprimerReservation.setBounds(308, 192, 104, 23);
