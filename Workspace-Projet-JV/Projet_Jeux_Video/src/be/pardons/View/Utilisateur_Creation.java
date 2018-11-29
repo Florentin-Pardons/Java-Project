@@ -6,6 +6,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
@@ -92,7 +93,7 @@ public class Utilisateur_Creation extends JFrame {
 		
 		//lbl adresse
 		lblAdresse = new JLabel("Adresse");
-		lblAdresse.setBounds(22, 152, 46, 14);
+		lblAdresse.setBounds(22, 152, 67, 14);
 		contentPane.add(lblAdresse);
 		
 		//txt adresse
@@ -114,7 +115,7 @@ public class Utilisateur_Creation extends JFrame {
 		
 		//lbl mp2
 		lblMp2 = new JLabel("Mot de passe confirmation");
-		lblMp2.setBounds(222, 90, 135, 14);
+		lblMp2.setBounds(222, 90, 148, 14);
 		contentPane.add(lblMp2);
 		
 		//txt mp2
@@ -126,12 +127,12 @@ public class Utilisateur_Creation extends JFrame {
 		//radio admin
 		rdbtnAdmin = new JRadioButton("Admin");
 		rdbtnAdmin.setSelected(true);
-		rdbtnAdmin.setBounds(222, 148, 60, 23);
+		rdbtnAdmin.setBounds(222, 148, 100, 23);
 		contentPane.add(rdbtnAdmin);
 		
 		//radio joueur
 		rdbtnJoueur = new JRadioButton("Joueur");
-		rdbtnJoueur.setBounds(284, 148, 60, 23);
+		rdbtnJoueur.setBounds(329, 148, 73, 23);
 		contentPane.add(rdbtnJoueur);
 		
 		//Group the radio buttons.
@@ -164,7 +165,7 @@ public class Utilisateur_Creation extends JFrame {
 				String mdp1 = txtMp1.getText().toString();
 				String mdp2 = txtMp2.getText().toString();
 				
-				if(!pseudo.isEmpty() && !nom.isEmpty() && !prenom.isEmpty() && !age.isEmpty() && !adresse.isEmpty() && !mdp1.isEmpty() && !mdp2.isEmpty() && mdp1.equals(mdp2))
+				if(!pseudo.isEmpty() && !nom.isEmpty() && !prenom.isEmpty() && !age.isEmpty() && Integer.parseInt(age) > 0 && !adresse.isEmpty() && !mdp1.isEmpty() && !mdp2.isEmpty() && mdp1.equals(mdp2))
 				{
 					if(rdbtnJoueur.isSelected())
 					{
@@ -173,11 +174,16 @@ public class Utilisateur_Creation extends JFrame {
 							Joueur joueur = new Joueur(pseudo, mdp1, nom, prenom, Integer.parseInt(age), adresse);
 							if(joueur.Verif() == false) {
 								if(joueur.Creer() == true){
+									JOptionPane.showMessageDialog(rootPane, "Utilisateur créé", "Information : ", JOptionPane.INFORMATION_MESSAGE);
 									Utilisateur_Gestion p = new Utilisateur_Gestion(admin);
 									p.setVisible(true);
 									dispose();
 								}
+								else
+									JOptionPane.showMessageDialog(rootPane, "Erreur system : echec de l'update", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 							}
+							else
+								JOptionPane.showMessageDialog(rootPane, "Utilisateur deja existant", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 						}
 						catch(Exception err)
 						{
@@ -195,7 +201,11 @@ public class Utilisateur_Creation extends JFrame {
 									p.setVisible(true);
 									dispose();
 								}
+								else
+									JOptionPane.showMessageDialog(rootPane, "Erreur system : echec de l'update", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 							}
+							else
+								JOptionPane.showMessageDialog(rootPane, "Utilisateur deja existant", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 						}
 						catch(Exception err)
 						{
@@ -203,13 +213,13 @@ public class Utilisateur_Creation extends JFrame {
 						}
 					}
 					else
-						System.out.println("erreur");
+						JOptionPane.showMessageDialog(rootPane, "Aucun type d'utilisateur selectionné", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 				}
 				else
-					System.out.println("erreur");
+					JOptionPane.showMessageDialog(rootPane, "Erreur d'encodage dans le formulaire", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 			}
 		});
-		btnEnregister.setBounds(255, 196, 89, 23);
+		btnEnregister.setBounds(255, 196, 115, 23);
 		contentPane.add(btnEnregister);
 	}
 }
