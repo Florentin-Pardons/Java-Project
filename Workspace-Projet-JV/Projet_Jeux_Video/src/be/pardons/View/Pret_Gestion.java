@@ -57,23 +57,29 @@ public class Pret_Gestion extends JFrame {
 	            public void mouseClicked(java.awt.event.MouseEvent event) {
 	            	if (event.getClickCount() == 2) {
 	            		Jeu jeu = list.getSelectedValue().GetEx_Jeu().GetJeu();
-	            		JOptionPane.showMessageDialog(rootPane, jeu.toString(), "Information Jeu : ", JOptionPane.INFORMATION_MESSAGE);
+	            		JOptionPane.showMessageDialog(rootPane, jeu.message(), "Information Jeu : ", JOptionPane.INFORMATION_MESSAGE);
 	            	  }
 	            }
 	        });	
 		
 		//Scroll
 		scrollPane = new JScrollPane(list);
-		scrollPane.setBounds(31, 11, 376, 166);
+		scrollPane.setBounds(10, 11, 414, 166);
 		contentPane.add(scrollPane);
 		
 		//btn creer
 		btnCreerPret = new JButton("Modifier");
 		btnCreerPret.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				Pret_Modifier p = new Pret_Modifier(joueur, list.getSelectedValue());
-				p.setVisible(true);
-				dispose();
+				Pret pret = list.getSelectedValue();
+				if(pret != null)
+				{
+					Pret_Modifier p = new Pret_Modifier(joueur, list.getSelectedValue());
+					p.setVisible(true);
+					dispose();
+				}
+				else
+					JOptionPane.showMessageDialog(rootPane, "Aucun pret selectionné", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 			}
 		});
 		btnCreerPret.setBounds(60, 188, 104, 23);
@@ -81,8 +87,10 @@ public class Pret_Gestion extends JFrame {
 		
 		//btn supprimer
 		btnSupprimerPret = new JButton("Supprimer");
+		btnSupprimerPret.setEnabled(false);
 		btnSupprimerPret.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				//Automatique
 			}
 		});
 		btnSupprimerPret.setBounds(268, 188, 104, 23);

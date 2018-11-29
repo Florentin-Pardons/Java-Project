@@ -14,6 +14,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 
 public class Pret_Modifier extends JFrame {
 
@@ -75,7 +76,7 @@ public class Pret_Modifier extends JFrame {
 		txtFinPret.setColumns(10);
 		
 		lblIdExemplaire = new JLabel("Id Exemplaire");
-		lblIdExemplaire.setBounds(21, 76, 75, 14);
+		lblIdExemplaire.setBounds(21, 76, 95, 14);
 		contentPane.add(lblIdExemplaire);
 		
 		txtIdEx_Jeu = new JTextField(String.valueOf(pret.GetEx_Jeu().GetId()));
@@ -85,7 +86,7 @@ public class Pret_Modifier extends JFrame {
 		txtIdEx_Jeu.setColumns(10);
 		
 		lblNomJeu = new JLabel("Nom Jeu");
-		lblNomJeu.setBounds(21, 107, 46, 14);
+		lblNomJeu.setBounds(21, 107, 81, 14);
 		contentPane.add(lblNomJeu);
 		
 		txtNomJeu = new JTextField(pret.GetEx_Jeu().GetJeu().GetNom());
@@ -95,7 +96,7 @@ public class Pret_Modifier extends JFrame {
 		txtNomJeu.setColumns(10);
 		
 		lblTarifJeu = new JLabel("Tarif Jeu");
-		lblTarifJeu.setBounds(21, 138, 46, 14);
+		lblTarifJeu.setBounds(21, 138, 81, 14);
 		contentPane.add(lblTarifJeu);
 		
 		txtTarif = new JTextField(String.valueOf(pret.GetEx_Jeu().GetJeu().GetTarif()));
@@ -105,7 +106,7 @@ public class Pret_Modifier extends JFrame {
 		txtTarif.setColumns(10);
 		
 		lblPreteur = new JLabel("PRETEUR");
-		lblPreteur.setBounds(240, 14, 46, 14);
+		lblPreteur.setBounds(240, 14, 62, 14);
 		contentPane.add(lblPreteur);
 		
 		lblNom = new JLabel("Nom");
@@ -129,7 +130,7 @@ public class Pret_Modifier extends JFrame {
 		txtPrenomPreteur.setColumns(10);
 		
 		lblAdresse = new JLabel("Adresse");
-		lblAdresse.setBounds(240, 107, 46, 14);
+		lblAdresse.setBounds(240, 107, 62, 14);
 		contentPane.add(lblAdresse);
 		
 		txtAddrPreteur = new JTextField(preteur.GetAdresse());
@@ -142,14 +143,14 @@ public class Pret_Modifier extends JFrame {
 		lblVotreSolde.setBounds(21, 197, 67, 14);
 		contentPane.add(lblVotreSolde);
 		
-		txtSolde = new JTextField(Double.toString(joueur.GetSolde()));
+		txtSolde = new JTextField(Integer.toString(joueur.GetSolde()));
 		txtSolde.setEditable(false);
 		txtSolde.setBounds(112, 197, 86, 20);
 		contentPane.add(txtSolde);
 		txtSolde.setColumns(10);
 		
 		lblNombreDeSemaines = new JLabel("Nombre de semaines \u00E0 Ajouter");
-		lblNombreDeSemaines.setBounds(10, 231, 147, 14);
+		lblNombreDeSemaines.setBounds(10, 231, 158, 14);
 		contentPane.add(lblNombreDeSemaines);
 		
 		spinnerAddSem = new JSpinner();
@@ -159,29 +160,29 @@ public class Pret_Modifier extends JFrame {
 		
 		JButton btnValider = new JButton("Valider");
 		btnValider.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent arg0) {				
 				if( (Integer) spinnerAddSem.getValue() > 0 && (Integer) spinnerAddSem.getValue() < 5 ) {
 					try {
 						int res = (Integer) spinnerAddSem.getValue() * 7;
 						
 						if(joueur.GetSolde() >= pret.GetEx_Jeu().GetJeu().GetTarif()*(Integer) spinnerAddSem.getValue())
 						{
-							//Date fin							
-							//SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");							
-							
+														
+							//SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 							Calendar c = Calendar.getInstance();
 							c.setTime(pret.GetDateFin());
 							c.add(Calendar.DATE, res);
 							
+							//Update date pret
 							pret.SetDateFin(c.getTime());
-							pret.UpdateDate();
+							pret.UpdateDate();					
 							
 							//Refresh
 							joueur.GetListPret().clear();
 							joueur.SetListPret(Pret.List(joueur));
 							
 							//Solde du joueur
-							double newsolde = joueur.GetSolde() - pret.GetEx_Jeu().GetJeu().GetTarif()*(Integer) spinnerAddSem.getValue();
+							int newsolde = joueur.GetSolde() - pret.GetEx_Jeu().GetJeu().GetTarif()*(Integer) spinnerAddSem.getValue();
 							joueur.SetSolde(newsolde);
 							joueur.UpdateSolde();
 							
@@ -190,18 +191,22 @@ public class Pret_Modifier extends JFrame {
 							preteur.SetSolde(newsolde);
 							preteur.UpdateSolde();
 							
+							JOptionPane.showMessageDialog(rootPane, "Duree du pret augmentée", "Information Pret : ", JOptionPane.INFORMATION_MESSAGE);
+						
 							Pret_Gestion p = new Pret_Gestion(joueur);
 							p.setVisible(true);
 							dispose();
 						}
 						else
-							System.out.println("Pas assez de solde");
+							JOptionPane.showMessageDialog(rootPane, "Pas assez de credit sur votre solde", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 					}
 					catch(Exception err)
 					{
 						System.out.println(err);
 					}
 				}
+				else
+					JOptionPane.showMessageDialog(rootPane, "Erreur system : echec de l'update", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 					
 			}
 		});
