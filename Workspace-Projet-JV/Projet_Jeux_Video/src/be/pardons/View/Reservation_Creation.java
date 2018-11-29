@@ -6,6 +6,7 @@ import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import be.pardons.POJO.Jeu;
 import be.pardons.POJO.Joueur;
+import be.pardons.POJO.Pret;
 import be.pardons.POJO.Reservation;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -87,7 +88,7 @@ public class Reservation_Creation extends JFrame {
             public void mouseClicked(java.awt.event.MouseEvent event) {
             	if (event.getClickCount() == 2) {
             		Jeu jeu = list.getSelectedValue();
-            		JOptionPane.showMessageDialog(rootPane, jeu.toString(), "Information Jeu : ", JOptionPane.INFORMATION_MESSAGE);
+            		JOptionPane.showMessageDialog(rootPane, jeu.message(), "Information Jeu : ", JOptionPane.INFORMATION_MESSAGE);
             	  }
             }
         });	
@@ -118,23 +119,19 @@ public class Reservation_Creation extends JFrame {
 					try
 					{
 						Reservation res = new Reservation(jeu);
-						if(res.Creer(joueur) == true){ //Cree la res
-							
-							////////
-							/*for (Reservation reserv : Reservation.List(joueur)) {
-						        if (reserv.GetJeu().GetId() == jeu.GetId()) {
-						            res =  reserv;
-						        }
-						    }*/
-							
-							for (Reservation reserv : joueur.GetListRes()) {
+						if(res.Creer(joueur) == true)
+						{							
+							for (Reservation reserv : Reservation.List(joueur)) {
 						        if (reserv.GetJeu().GetId() == jeu.GetId()) {
 						            res =  reserv;
 						        }
 						    }
 							
 							if(res.VerifJoueur(joueur)==true) //verifie les Ex Dispo + Solde
+							{
+								res.Delete();
 								JOptionPane.showMessageDialog(rootPane, "Exemplaire disponible trouvé => voir Gestion des prets", "Information : ", JOptionPane.INFORMATION_MESSAGE);
+							}
 							else
 								JOptionPane.showMessageDialog(rootPane, "Reservation Créé", "Information : ", JOptionPane.INFORMATION_MESSAGE);
 							
@@ -142,11 +139,16 @@ public class Reservation_Creation extends JFrame {
 							joueur.GetListRes().clear();
 							joueur.SetListRes(Reservation.List(joueur));
 							
+							joueur.GetListPret().clear();
+							joueur.SetListPret(Pret.List(joueur));
+							
 							//Retour vers gestion
 							Reservation_Gestion p = new Reservation_Gestion(joueur);
 							p.setVisible(true);
 							dispose();
 						}
+						else
+							JOptionPane.showMessageDialog(rootPane, "Erreur system : echec lors de la creation de la reservation", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 					}
 					catch(Exception err)
 					{
@@ -154,7 +156,7 @@ public class Reservation_Creation extends JFrame {
 					}
 				}
 				else
-					System.out.println("ereur");
+					JOptionPane.showMessageDialog(rootPane, "Aucun jeu selectionné", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 			}
 		});
 		btnValider.setBounds(222, 230, 89, 23);
