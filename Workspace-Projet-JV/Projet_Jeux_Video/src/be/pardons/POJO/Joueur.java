@@ -57,7 +57,7 @@ public class Joueur extends Personne {
 	public Joueur(String pseudo, String mp, String nom, String prenom, Integer age, String adresse)
 	{
 		super(pseudo, mp, nom, prenom, age, adresse);
-		this.solde = 5;
+		this.solde = 10;
 		this.listExJeu = new ArrayList<Ex_Jeu>();
 		this.listRes = new ArrayList<Reservation>();
 		this.listPret = new ArrayList<Pret>();
@@ -75,7 +75,7 @@ public class Joueur extends Personne {
 	public Joueur(int id, String pseudo, String mp, String nom, String prenom, Integer age, String adresse)
 	{
 		super(id, pseudo, mp, nom, prenom, age, adresse);
-		this.solde = 5;
+		this.solde = 10;
 		this.listExJeu = new ArrayList<Ex_Jeu>();
 		this.listRes = new ArrayList<Reservation>();
 		this.listPret = new ArrayList<Pret>();
