@@ -2,6 +2,7 @@ package be.pardons.View;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
@@ -47,7 +48,7 @@ public class Profil_Joueur extends JFrame {
 		//txt pseudo
 		txtPseudo = new JTextField(joueur.GetPseudo());
 		txtPseudo.setEnabled(false);
-		txtPseudo.setBounds(99, 25, 86, 20);
+		txtPseudo.setBounds(99, 25, 110, 20);
 		contentPane.add(txtPseudo);
 		txtPseudo.setColumns(10);
 		
@@ -58,7 +59,7 @@ public class Profil_Joueur extends JFrame {
 		
 		//txt nom
 		txtNom = new JTextField(joueur.GetNom());
-		txtNom.setBounds(99, 56, 86, 20);
+		txtNom.setBounds(99, 56, 110, 20);
 		contentPane.add(txtNom);
 		txtNom.setColumns(10);
 		
@@ -69,7 +70,7 @@ public class Profil_Joueur extends JFrame {
 		
 		//txt prenom
 		txtPrenom = new JTextField(joueur.GetPrenom());
-		txtPrenom.setBounds(99, 87, 86, 20);
+		txtPrenom.setBounds(99, 87, 110, 20);
 		contentPane.add(txtPrenom);
 		txtPrenom.setColumns(10);
 		
@@ -80,18 +81,18 @@ public class Profil_Joueur extends JFrame {
 		
 		//txt age
 		txtAge = new JTextField(joueur.GetAge().toString());
-		txtAge.setBounds(99, 118, 86, 20);
+		txtAge.setBounds(99, 118, 110, 20);
 		contentPane.add(txtAge);
 		txtAge.setColumns(10);
 		
 		//lbl adresse
 		lblAdresse = new JLabel("Adresse");
-		lblAdresse.setBounds(22, 152, 46, 14);
+		lblAdresse.setBounds(22, 152, 67, 14);
 		contentPane.add(lblAdresse);
 		
 		//txt adresse
 		txtadresse = new JTextField(joueur.GetAdresse());
-		txtadresse.setBounds(99, 149, 86, 20);
+		txtadresse.setBounds(99, 149, 110, 20);
 		contentPane.add(txtadresse);
 		txtadresse.setColumns(10);
 		
@@ -129,7 +130,7 @@ public class Profil_Joueur extends JFrame {
 				String age = txtAge.getText().toString();
 				String adresse = txtadresse.getText().toString();
 				
-				if(!nom.isEmpty() && !prenom.isEmpty() && !age.isEmpty() && !adresse.isEmpty())
+				if(!nom.isEmpty() && !prenom.isEmpty() && !age.isEmpty() && Integer.parseInt(age) > 0 && !adresse.isEmpty())
 				{
 					try {
 						joueur.SetNom(nom);
@@ -137,11 +138,15 @@ public class Profil_Joueur extends JFrame {
 						joueur.SetAge(Integer.parseInt(age));
 						joueur.SetAdresse(adresse);
 						
-						joueur.Update();
-						
-						Profil_Joueur p = new Profil_Joueur(joueur);
-						p.setVisible(true);
-						dispose();
+						if(joueur.Update() == true)
+						{			
+							JOptionPane.showMessageDialog(rootPane, "Profil mis a jour", "Information : ", JOptionPane.INFORMATION_MESSAGE);
+							Profil_Joueur p = new Profil_Joueur(joueur);
+							p.setVisible(true);
+							dispose();
+						}
+						else
+							JOptionPane.showMessageDialog(rootPane, "Erreur system : echec de l'update", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 					}
 					catch(Exception err)
 					{
@@ -149,7 +154,7 @@ public class Profil_Joueur extends JFrame {
 					}
 				}
 				else
-					System.out.println("Erreur");
+					JOptionPane.showMessageDialog(rootPane, "Erreur d'encodage dans le formulaire", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 			}
 		});
 		btnModifier.setBounds(267, 195, 89, 23);
