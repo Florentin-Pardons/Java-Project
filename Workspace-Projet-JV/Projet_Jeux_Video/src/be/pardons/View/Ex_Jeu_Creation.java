@@ -57,7 +57,7 @@ public class Ex_Jeu_Creation extends JFrame {
             public void mouseClicked(java.awt.event.MouseEvent event) {
             	if (event.getClickCount() == 2) {
             		Jeu jeu = list.getSelectedValue();
-            		JOptionPane.showMessageDialog(rootPane, jeu.toString(), "Information Jeu : ", JOptionPane.INFORMATION_MESSAGE);
+            		JOptionPane.showMessageDialog(rootPane, jeu.message(), "Information Jeu : ", JOptionPane.INFORMATION_MESSAGE);
             	  }
             }
         });
@@ -112,28 +112,29 @@ public class Ex_Jeu_Creation extends JFrame {
 							//Refresh
 							joueur.GetListJeu().clear();
 							joueur.SetListJeu(Ex_Jeu.List(joueur));
+							System.out.println(joueur.GetListJeu().size());
 							
-							if(d==true)
+							//Verifie les reservations
+							if(d==true) //Si Disponible
 							{
+								//REFRESH L'EXEMPLAIRE
+								ex_jeu = joueur.GetListJeu().get( joueur.GetListJeu().size() - 1);
 								
-								Reservation res = new Reservation(jeu);
-								for (Reservation reserv : Reservation.List()) {
-							        if (reserv.GetJeu().GetId() == jeu.GetId()) {
-							            res =  reserv;
-							        }
-							    }
-								
-								if(res.VerifPreteur(joueur)==true) //verifie les Ex Dispo + Solde
-									JOptionPane.showMessageDialog(rootPane, "Exemplaire disponible trouvé => voir Gestion des prets", "Information : ", JOptionPane.INFORMATION_MESSAGE);
+								//Modifier
+								if(ex_jeu.VerifPreteur(joueur)==true) //verifie les reser + Solde
+									JOptionPane.showMessageDialog(rootPane, "Votre exemplaire a été reservé", "Information : ", JOptionPane.INFORMATION_MESSAGE);
 								else
-									JOptionPane.showMessageDialog(rootPane, "Reservation Créé", "Information : ", JOptionPane.INFORMATION_MESSAGE);
+									JOptionPane.showMessageDialog(rootPane, "Exemplaire Créé", "Information : ", JOptionPane.INFORMATION_MESSAGE);
 							}
-							
+							else
+								JOptionPane.showMessageDialog(rootPane, "Exemplaire Créé", "Information : ", JOptionPane.INFORMATION_MESSAGE);
 							
 							Ex_Jeu_Gestion p = new Ex_Jeu_Gestion(joueur);
 							p.setVisible(true);
 							dispose();
 						}
+						else
+							JOptionPane.showMessageDialog(rootPane, "Erreur system : echec lors de la creation de l'exemplaire", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 					}
 					catch(Exception err)
 					{
@@ -141,7 +142,7 @@ public class Ex_Jeu_Creation extends JFrame {
 					}
 				}
 				else
-					System.out.println("ereur");
+					JOptionPane.showMessageDialog(rootPane, "Aucun jeu selectionné", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 			}
 		});
 		btnValider.setBounds(298, 210, 89, 23);
