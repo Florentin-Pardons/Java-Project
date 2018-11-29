@@ -2,15 +2,15 @@ package be.pardons.View;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.border.EmptyBorder;
-
 import be.pardons.POJO.Administrateur;
 import be.pardons.POJO.Ex_Jeu;
 import be.pardons.POJO.Joueur;
 import be.pardons.POJO.Pret;
 import be.pardons.POJO.Reservation;
-
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -25,7 +25,7 @@ public class Connexion extends JFrame {
 	private JLabel lblPseudo;
 	private JTextField txtPseudo;
 	private JLabel lblMp;
-	private JTextField txtMp;
+	private JPasswordField txtMp;
 	private JRadioButton rdbtnJoueur;
 	private JRadioButton rdbtnAdmin;
 	private JButton btnRetour;
@@ -59,7 +59,7 @@ public class Connexion extends JFrame {
 		contentPane.add(lblMp);
 		
 		//txt mp
-		txtMp = new JTextField();
+		txtMp = new JPasswordField();
 		txtMp.setBounds(177, 59, 86, 20);
 		contentPane.add(txtMp);
 		txtMp.setColumns(10);
@@ -107,7 +107,8 @@ public class Connexion extends JFrame {
 						try
 						{
 							Joueur joueur = Joueur.Verif(pseudo, mp);
-							if(joueur.GetPseudo() != null) {
+							if(joueur.GetPseudo() != null) 
+							{
 								
 								//Init les listes
 								joueur.SetListRes(Reservation.List(joueur));
@@ -118,6 +119,8 @@ public class Connexion extends JFrame {
 								p.setVisible(true);
 								dispose();
 							}
+							else
+								JOptionPane.showMessageDialog(rootPane, "Pseudo/MP invalide", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 						}
 						catch(Exception err)
 						{
@@ -129,11 +132,14 @@ public class Connexion extends JFrame {
 						try
 						{
 							Administrateur admin = Administrateur.Verif(pseudo, mp);
-							if(admin.GetPseudo() != null) {
+							if(admin.GetPseudo() != null) 
+							{
 								HomeAdmin p = new HomeAdmin(admin);
 								p.setVisible(true);
 								dispose();
 							}
+							else
+								JOptionPane.showMessageDialog(rootPane, "Pseudo/MP invalide", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 						}
 						catch(Exception err)
 						{
@@ -142,11 +148,11 @@ public class Connexion extends JFrame {
 					}
 					else
 					{
-						System.out.println("Erreur");
+						JOptionPane.showMessageDialog(rootPane, "Veuillez choisir un type de personne", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 				else
-					System.out.println("Erreur");
+					JOptionPane.showMessageDialog(rootPane, "Erreur d'encodage dans le formulaire", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 			}
 		});
 		btnValider.setBounds(174, 143, 89, 23);
