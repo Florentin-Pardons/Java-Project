@@ -1,5 +1,6 @@
 package be.pardons.POJO;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -64,6 +65,23 @@ public class Pret {
 	}
 	
 	//Methode
+	//Creer
+	public boolean Creer(Joueur joueur) {
+		PretDAO pretDao = new PretDAO();
+		return pretDao.create(this, joueur);
+	}
+	
+	//Delete
+	public boolean Delete() {
+		PretDAO pretDao = new PretDAO();
+		return pretDao.delete(this);
+	}
+		
+	//UpdateDate
+	public boolean UpdateDate() {
+		PretDAO pretDao = new PretDAO();
+		return pretDao.update(this);
+	}
 	
 	//Creation de la liste
 	public static List<Pret> List(Joueur joueur)
@@ -72,29 +90,27 @@ public class Pret {
 		return pretDao.list(joueur);
 	}
 	
-	public boolean Creer(Joueur joueur) {
+	//Delete le pret si ajd > date fin
+	public static void Verif()
+	{
 		PretDAO pretDao = new PretDAO();
-		return pretDao.create(this, joueur);
-	}
-	
-	public boolean Delete() {
-		PretDAO pretDao = new PretDAO();
-		return pretDao.delete(this);
-	}
-	
-	public boolean Update() {
-		PretDAO pretDao = new PretDAO();
-		return pretDao.update(this);
-	}
-	
-	public boolean UpdateDate() {
-		PretDAO pretDao = new PretDAO();
-		return pretDao.updatedate(this);
-	}
+		Date now = new Date();
 		
+		for(Pret p : pretDao.list())
+		{
+			if(now.compareTo(p.GetDateFin()) > 0 )
+			{
+				p.Delete();
+				p.GetEx_Jeu().SetDispo(false);
+				p.GetEx_Jeu().Update();
+			}
+		}
+	}
+	
 	// Tostring
 	@Override
 	public String toString() {
-		return id + " " + datedeb + " " + datefin + " " + exjeu ;
+		SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+		return "Nom Jeu : " + exjeu.GetJeu().GetNom() + ", Date Deb : " + formatter.format(datedeb) + ", Date fin : " + formatter.format(datefin) + ", Id Exempl : " + exjeu.GetId() ;
 	}
 }

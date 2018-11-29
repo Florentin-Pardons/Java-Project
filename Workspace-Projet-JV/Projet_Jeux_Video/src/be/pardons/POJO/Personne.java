@@ -97,35 +97,34 @@ public class Personne {
 		this.adresse = adresse;		
 	}
 	
-	// Tostring
-	public String toString() {
-		return pseudo + " " + mp + " " + nom + " " + prenom + " " + age + " " + adresse;
-	}
-	
+	//Methode	
+	//Creer
 	public boolean Creer() {
 		PersonneDAO persDao = new PersonneDAO();
 		return persDao.create(this);
 	}
 	
+	//Delete
 	public boolean Delete() {
 		PersonneDAO persDao = new PersonneDAO();
 		return persDao.delete(this);
 	}
 	
+	//Update
 	public boolean Update() {
 		PersonneDAO persDao = new PersonneDAO();
 		return persDao.update(this);
 	}
 	
+	//Verif (Inscription)
 	public boolean Verif()
 	{
 		PersonneDAO persDao = new PersonneDAO();
 		return persDao.verif(this);
 	}
 	
-	public static Personne Verif(String pseudo, String mp)
-	{
-		PersonneDAO persDao = new PersonneDAO();
-		return persDao.verif(pseudo, mp);
+	// Tostring
+	public String toString() {
+		return "Pseudo : " + pseudo + ", Nom : " + nom + ", Prenom : " + prenom + ", Age : " + age + ", Adresse : " + adresse;
 	}
 }

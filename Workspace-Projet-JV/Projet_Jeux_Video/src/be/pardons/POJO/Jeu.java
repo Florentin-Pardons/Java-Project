@@ -1,5 +1,6 @@
 package be.pardons.POJO;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import be.pardons.DAO.JeuDAO;
 import java.util.List;
@@ -65,10 +66,10 @@ public class Jeu {
 		return this.editeur;
 	}
 	
+	//Constructeur
 	public Jeu()
 	{}
 	
-	//Constructeur
 	public Jeu(String nom, int tarif, Date datesortie, String developpeur, String editeur)
 	{
 		this.nom = nom;
@@ -89,16 +90,19 @@ public class Jeu {
 	}
 	
 	//Methode
+	//Creer
 	public boolean Creer() {
 		JeuDAO jeu = new JeuDAO();
 		return jeu.create(this);
 	}
 	
+	//Delete
 	public boolean Delete() {
 		JeuDAO jeu = new JeuDAO();
 		return jeu.delete(this);
 	}
 	
+	//Update
 	public boolean Update() {
 		JeuDAO jeu = new JeuDAO();
 		return jeu.update(this);
@@ -114,6 +118,12 @@ public class Jeu {
 	// Tostring
 	@Override
 	public String toString() {
-		return "Nom : " + nom + " " + tarif + " " + datesortie + " " + developpeur + " " + editeur;
+		return "Nom : " + nom + ", Tarif : " + tarif;
 	}
+	
+	//Message
+		public String message() {
+			SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+			return "Nom : " + nom + ", Tarif : " + tarif + ", Date Sortie : " + formatter.format(datesortie) + ", Developpeur : " + developpeur + ", Editeur : " + editeur;
+		}
 }

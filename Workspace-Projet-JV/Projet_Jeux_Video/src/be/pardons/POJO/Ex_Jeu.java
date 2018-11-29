@@ -1,5 +1,6 @@
 package be.pardons.POJO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import be.pardons.DAO.Ex_JeuDAO;
@@ -52,16 +53,19 @@ public class Ex_Jeu {
 	}
 	
 	//Methode
+	//Creer
 	public boolean Creer(Joueur joueur) {
 		Ex_JeuDAO ex_jeuDao = new Ex_JeuDAO();
 		return ex_jeuDao.create(this, joueur);
 	}
 	
+	//Delete
 	public boolean Delete() {
 		Ex_JeuDAO ex_jeuDao = new Ex_JeuDAO();
 		return ex_jeuDao.delete(this);
 	}
 	
+	//Update
 	public boolean Update() {
 		Ex_JeuDAO ex_jeuDao = new Ex_JeuDAO();
 		return ex_jeuDao.update(this);
@@ -102,9 +106,93 @@ public class Ex_Jeu {
 		return null;
 	}
 	
+	
+	//Verifie les reservations
+	public boolean VerifPreteur(Joueur joueur)
+	{
+		List<Reservation> listResPot = new ArrayList<Reservation>();
+		Joueur demandeur = new Joueur();
+		
+		//Liste de reservtion potentiel
+		for (Reservation reserv : Reservation.List()) 
+		{
+			System.out.println(reserv);
+	        if (reserv.GetJeu().GetId() == this.GetJeu().GetId()) 
+	        {
+	        	//listResPot.add(reserv);
+	        	demandeur = Reservation.Demandeur(reserv);
+	        	
+				if(demandeur.GetSolde() >= this.GetJeu().GetTarif()) //verifie le solde
+				{
+					listResPot.add(reserv);					
+				}
+	        }
+	    }
+		
+		if(!listResPot.isEmpty())
+		{
+			Reservation resfinal = listResPot.get(0);
+			
+			for (Reservation reserv : listResPot) 
+			{
+				//Si les 2 res sont le meme
+				if(resfinal.GetDateRes().compareTo(reserv.GetDateRes()) == 0)
+				{
+					if(Reservation.Demandeur(reserv).GetSolde() == Reservation.Demandeur(resfinal).GetSolde()) //Solde le meme
+					{
+						if(Reservation.Demandeur(reserv).GetAge() == Reservation.Demandeur(resfinal).GetAge()) //Age le meme
+						{
+							//Choix aleatoire
+							if(Math.random() == 1)
+								resfinal = reserv;
+						}
+						else if(Reservation.Demandeur(reserv).GetAge() > Reservation.Demandeur(resfinal).GetAge()) //Age plus grand
+							resfinal = reserv;
+					}
+					else if (Reservation.Demandeur(reserv).GetSolde() > Reservation.Demandeur(resfinal).GetSolde()) //Solde plus grand
+						resfinal = reserv;
+				}
+				else if(reserv.GetDateRes().compareTo(resfinal.GetDateRes()) > 0) //Si la premiere est plus grand
+					resfinal = reserv;
+			}
+			
+			demandeur = Reservation.Demandeur(resfinal); //
+			
+			if(resfinal != null)
+			{
+				Pret pret = new Pret(this);
+				if(pret.Creer(demandeur) == true) //creer pret
+				{
+					this.SetDispo(false);
+					this.Update(); //update dispo
+					
+					//Solde du joueur preteur
+					int newsolde = joueur.GetSolde() + this.GetJeu().GetTarif();
+					joueur.SetSolde(newsolde);
+					joueur.UpdateSolde();
+					
+					//Solde du receveur
+					newsolde = demandeur.GetSolde() - this.GetJeu().GetTarif();
+					demandeur.SetSolde(newsolde);
+					demandeur.UpdateSolde();
+					
+					resfinal.Delete(); //Delete la reservation du demandeur
+					
+					return true;
+				}	
+			}
+			else
+				System.out.println("Erreur System");
+		}
+		else
+			System.out.println("Pas de reservation dispo");
+		
+		return false;
+	}
+	
 	// Tostring
 	@Override
 	public String toString() {
-		return jeu + " " + dispo;
+		return "Id : "+ id + ", Nom : " + jeu.GetNom() + ", Dispo : " + dispo;
 	}
 }

@@ -1,5 +1,6 @@
 package be.pardons.POJO;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import be.pardons.DAO.ReservationDAO;
@@ -48,35 +49,93 @@ public class Reservation {
 	}
 	
 	//Methode
+	//Creer
+	public boolean Creer(Joueur joueur) {
+		ReservationDAO reservationDao = new ReservationDAO();
+		return reservationDao.create(this, joueur);
+	}
 	
-	//Creation de la liste
+	//Delete
+	public boolean Delete() {
+		ReservationDAO reservationDao = new ReservationDAO();
+		return reservationDao.delete(this);
+	}
+	
+	//Update
+	public boolean Update() {
+		ReservationDAO reservationDao = new ReservationDAO();
+		return reservationDao.update(this);
+	}
+	
+	//Creation de la liste reservation du joueur
 	public static List<Reservation> List(Joueur joueur)
 	{
 		ReservationDAO reservationDao = new ReservationDAO();
 		return reservationDao.list(joueur);
 	}
 	
-	public boolean Creer(Joueur joueur) {
-		ReservationDAO reservationDao = new ReservationDAO();
-		return reservationDao.create(this, joueur);
-	}
-	
-	public boolean Delete() {
-		ReservationDAO reservationDao = new ReservationDAO();
-		return reservationDao.delete(this);
-	}
-	
-	public boolean Update() {
-		ReservationDAO reservationDao = new ReservationDAO();
-		return reservationDao.update(this);
-	}
-	
-	//Verifie les reservations
-	public boolean Verif(Joueur joueur)
+	//Liste de tt les reservations
+	public static List<Reservation> List()
 	{
-		if(joueur.GetSolde() > this.GetJeu().GetTarif()) //verifie le solde
+		ReservationDAO reservationDao = new ReservationDAO();
+		return reservationDao.list();
+	}
+		
+	//Receveur
+	public static Joueur Demandeur(Reservation res)
+	{
+		ReservationDAO reservationDao = new ReservationDAO();
+		return reservationDao.getDemandeur(res);
+	}
+		
+	//Verifie les reservations
+	public boolean VerifJoueur(Joueur joueur)
+	{
+		if(joueur.GetSolde() > this.GetJeu().GetTarif()) //verifie le solde du demandeur
 		{
 			Ex_Jeu exjeu = Ex_Jeu.Dispo(this.GetJeu()); //si il y a un ex dispo
+			
+			//////
+			/*
+			List<Ex_Jeu> listExPot = new ArrayList<Ex_Jeu>();
+			Joueur Preteur = new Joueur();
+			
+			//Liste d'Ex potentiel
+			for (Ex_Jeu ex : Ex_Jeu.ListDispo()) 
+			{
+		        if (ex.GetJeu().GetId() == this.GetJeu().GetId()) 
+		        {        	
+		        	listExPot.add(ex);
+		        }
+		    }
+			
+			if(!listExPot.isEmpty())
+			{
+				Ex_Jeu exfinal = listExPot.get(0);
+				
+				for (Ex_Jeu ex : listExPot) 
+				{
+					//Si les 2 res sont le meme
+					if( Ex_Jeu.Preteur(ex).GetSolde() ==  Ex_Jeu.Preteur(exfinal).GetSolde()) //Solde le meme
+					{
+						if( Ex_Jeu.Preteur(ex).GetAge() ==  Ex_Jeu.Preteur(exfinal).GetAge()) //Age le meme
+						{
+							//Choix aleatoire
+							if(Math.random() == 1)
+								exfinal = ex;
+						}
+						else if( Ex_Jeu.Preteur(ex).GetAge() >  Ex_Jeu.Preteur(exfinal).GetAge()) //Age plus grand
+							exfinal = ex;
+					}
+					else if ( Ex_Jeu.Preteur(ex).GetSolde() >  Ex_Jeu.Preteur(exfinal).GetSolde()) //Solde plus grand
+						exfinal = ex;
+				}
+				}
+				
+				Preteur = Ex_Jeu.Preteur(exfinal); //
+			/////
+			*/
+			
 			
 			if(exjeu != null)
 			{
@@ -86,14 +145,24 @@ public class Reservation {
 					exjeu.SetDispo(false);
 					exjeu.Update(); //update dispo
 					
-					//solde
-					double newsolde = joueur.GetSolde() - this.GetJeu().GetTarif();
+					//Solde du joueur
+					int newsolde = joueur.GetSolde() - this.GetJeu().GetTarif();
 					joueur.SetSolde(newsolde);
 					joueur.UpdateSolde();
 					
+					//Solde du preteur
+					Joueur preteur = Ex_Jeu.Preteur(exjeu);
+					newsolde = preteur.GetSolde() + this.GetJeu().GetTarif();
+					preteur.SetSolde(newsolde);
+					preteur.UpdateSolde();
+					
 					return true;
-				}	
+				}
+				else
+					System.out.println("Erreur lors de la creation du pret");
 			}
+			else
+				System.out.println("Aucun exemplaire trouvé");
 		}
 		return false;
 	}
@@ -101,6 +170,7 @@ public class Reservation {
 	// Tostring
 	@Override
 	public String toString() {
-		return id + " " + dateres + " " + jeu;
+		SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yyyy");
+		return "Date res : " + formatter.format(dateres) + ", Nom : " + jeu.GetNom();
 	}	
 }
