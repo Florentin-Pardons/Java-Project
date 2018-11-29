@@ -76,9 +76,18 @@ public class Utilisateur_Gestion extends JFrame {
 		btnModifierJoueur = new JButton("Modifier Joueur");
 		btnModifierJoueur.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				Joueur joueur = listJoueur.getSelectedValue();
+				if(joueur != null)
+				{				
+					Utilisateur_Joueur_Modifier p = new Utilisateur_Joueur_Modifier(admin, joueur);
+					p.setVisible(true);
+					dispose();
+				}
+				else
+					JOptionPane.showMessageDialog(rootPane, "Aucun joueur selectionné", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 			}
 		});
-		btnModifierJoueur.setBounds(21, 89, 162, 23);
+		btnModifierJoueur.setBounds(21, 89, 174, 23);
 		contentPane.add(btnModifierJoueur);
 		
 		//btn supprimer
@@ -91,10 +100,15 @@ public class Utilisateur_Gestion extends JFrame {
 				{
 					try
 					{
-						joueur.Delete();
-						Utilisateur_Gestion p = new Utilisateur_Gestion(admin);
-						p.setVisible(true);
-						dispose();
+						if(joueur.Delete())
+						{
+							JOptionPane.showMessageDialog(rootPane, "Joueur supprimé", "Information : ", JOptionPane.INFORMATION_MESSAGE);
+							Utilisateur_Gestion p = new Utilisateur_Gestion(admin);
+							p.setVisible(true);
+							dispose();
+						}
+						else
+							JOptionPane.showMessageDialog(rootPane, "Erreur system : echec de l'update", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 					}
 					catch(Exception err)
 					{
@@ -102,10 +116,10 @@ public class Utilisateur_Gestion extends JFrame {
 					}
 				}
 				else
-					System.out.println("ereur");
+					JOptionPane.showMessageDialog(rootPane, "Aucun joueur selectionné", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 			}
 		});
-		btnSupprimerJoueur.setBounds(247, 89, 162, 23);
+		btnSupprimerJoueur.setBounds(235, 89, 174, 23);
 		contentPane.add(btnSupprimerJoueur);
 		
 		//list admin
@@ -129,18 +143,50 @@ public class Utilisateur_Gestion extends JFrame {
 		btnModifierAdministrateur = new JButton("Modifier Administrateur");
 		btnModifierAdministrateur.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				Administrateur adminMo = listAdmin.getSelectedValue();
+				if(adminMo != null)
+				{
+					Utilisateur_Admin_Modifier p = new Utilisateur_Admin_Modifier(admin, adminMo);
+					p.setVisible(true);
+					dispose();
+				}
+				else
+					JOptionPane.showMessageDialog(rootPane, "Aucun admin selectionné", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 			}
 		});
-		btnModifierAdministrateur.setBounds(21, 193, 162, 23);
+		btnModifierAdministrateur.setBounds(21, 193, 174, 23);
 		contentPane.add(btnModifierAdministrateur);
 		
 		//btn supprimer
 		btnSupprimerAdministrateur = new JButton("Supprimer Administrateur");
 		btnSupprimerAdministrateur.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				Administrateur adminMo = listAdmin.getSelectedValue();
+				
+				if(adminMo != null)
+				{
+					try
+					{
+						if(adminMo.Delete() == true)
+						{					
+							JOptionPane.showMessageDialog(rootPane, "Admin supprimé", "Information : ", JOptionPane.INFORMATION_MESSAGE);
+							Utilisateur_Gestion p = new Utilisateur_Gestion(adminMo);
+							p.setVisible(true);
+							dispose();
+						}
+						else
+							JOptionPane.showMessageDialog(rootPane, "Erreur system : echec de l'update", "Erreur : ", JOptionPane.ERROR_MESSAGE);
+					}
+					catch(Exception err)
+					{
+						System.out.println(err);
+					}
+				}
+				else
+					JOptionPane.showMessageDialog(rootPane, "Aucun admin selectionné", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 			}
 		});
-		btnSupprimerAdministrateur.setBounds(247, 193, 162, 23);
+		btnSupprimerAdministrateur.setBounds(235, 193, 174, 23);
 		contentPane.add(btnSupprimerAdministrateur);
 		
 		//btn ajouter
@@ -152,7 +198,7 @@ public class Utilisateur_Gestion extends JFrame {
 				dispose();
 			}
 		});
-		btnAjouterUtilisateur.setBounds(21, 227, 130, 23);
+		btnAjouterUtilisateur.setBounds(21, 227, 174, 23);
 		contentPane.add(btnAjouterUtilisateur);
 		
 		//btn retour
