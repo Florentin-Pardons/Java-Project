@@ -2,6 +2,7 @@ package be.pardons.DAO;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,22 +11,17 @@ import be.pardons.POJO.Ex_Jeu;
 import be.pardons.POJO.Jeu;
 import be.pardons.POJO.Joueur;
 
-public class Ex_JeuDAO {
+public class Ex_JeuDAO extends DAO<Ex_Jeu>{
 	
 	static Connection connec = JVConnection.getInstance();
 	Statement stmt = null;
 	ResultSet res = null;
 	
 	public Ex_JeuDAO(){
-		//super(connec);
+		super(connec);
 	}
 	
-	/*
-	public JeuDAO(Connection conn){
-		super(conn);
-	}
-	*/
-	
+	//Creer
 	public boolean create(Ex_Jeu ex_jeux, Joueur joueur){		
 		try
 		{
@@ -39,14 +35,14 @@ public class Ex_JeuDAO {
 				return true;
 			}
 		}
-		catch(Exception err)
-		{
-			System.out.println(err);
+		catch(SQLException e){
+			e.printStackTrace();
 		}
 		
 		return false;
 	}
 	
+	//Delete
 	public boolean delete(Ex_Jeu ex_jeu){
 		try
 		{
@@ -60,14 +56,14 @@ public class Ex_JeuDAO {
 				return true;
 			}
 		}
-		catch(Exception err)
-		{
-			System.out.println(err);
+		catch(SQLException e){
+			e.printStackTrace();
 		}
 		
 		return false;
 	}
 	
+	//Update
 	public boolean update(Ex_Jeu ex_jeu){
 		try
 		{
@@ -81,14 +77,14 @@ public class Ex_JeuDAO {
 				return true;
 			}
 		}
-		catch(Exception err)
-		{
-			System.out.println(err);
+		catch(SQLException e){
+			e.printStackTrace();
 		}
 		
 		return false;
 	}
 	
+	//List
 	public List<Ex_Jeu> list(Joueur joueur){
 		List<Ex_Jeu> list = new ArrayList<Ex_Jeu>();
 		try
@@ -103,9 +99,8 @@ public class Ex_JeuDAO {
 				list.add(new Ex_Jeu(res.getInt("Ex_Jeu.num_exjeux_PK"), new Jeu(res.getInt("Jeu.num_jeu_PK"), res.getString("Jeu.nom"), res.getInt("Jeu.tarif"), res.getDate("Jeu.datesortie"), res.getString("Jeu.developpeur"), res.getString("Jeu.editeur")), res.getBoolean("Ex_Jeu.dispo")));
 			}
 		}
-		catch(Exception err)
-		{
-			System.out.println(err);
+		catch(SQLException e){
+			e.printStackTrace();
 		}
 		
 		return list;
@@ -126,9 +121,8 @@ public class Ex_JeuDAO {
 				list.add(new Ex_Jeu(res.getInt("EX_JEU.num_exjeux_PK"), new Jeu(res.getInt("Jeu.num_jeu_PK"), res.getString("Jeu.nom"), res.getInt("Jeu.tarif"), res.getDate("Jeu.datesortie"), res.getString("Jeu.developpeur"), res.getString("Jeu.editeur")), res.getBoolean("Ex_Jeu.dispo")));
 			}
 		}
-		catch(Exception err)
-		{
-			System.out.println(err);
+		catch(SQLException e){
+			e.printStackTrace();
 		}
 		
 		return list;
@@ -142,6 +136,7 @@ public class Ex_JeuDAO {
 			stmt = connec.createStatement();
 			
 			String result = "SELECT Ex_Jeu.num_exjeux_PK, Joueur.*, Personne.* FROM Personne INNER JOIN (Joueur INNER JOIN Ex_Jeu ON Joueur.num_joueur_PK = Ex_Jeu.num_joueur_FK) ON Personne.num_pers_PK = Joueur.num_joueur_PK where Ex_Jeu.num_exjeux_PK =" + ex_jeu.GetId() + ";";
+			System.out.println(result);
 			res = stmt.executeQuery(result);
 			
 			if(res.next()) //verif pri
@@ -152,13 +147,16 @@ public class Ex_JeuDAO {
 				joueur.SetPrenom(res.getString("Personne.prenom"));
 				joueur.SetAge(res.getInt("Personne.age"));
 				joueur.SetAdresse(res.getString("Personne.adresse"));
-				joueur.SetSolde(res.getDouble("Joueur.solde"));
+				joueur.SetSolde(res.getInt("solde"));
 			}
 		}
-		catch(Exception err)
-		{
-			System.out.println(err);
+		catch(SQLException e){
+			e.printStackTrace();
 		}
 		return joueur;
+	}
+
+	public boolean create(Ex_Jeu obj) {
+		return false;
 	}
 }

@@ -18,57 +18,32 @@ public class JoueurDAO extends DAO<Joueur>{
 		super(connec);
 	}
 	
-	public JoueurDAO(Connection conn){
-		super(conn);
-	}
-	
+	//Creer
 	public boolean create(Joueur joueur){		
 		try
-		{			
+		{
+			PersonneDAO pers = new PersonneDAO();
+			int id = pers.findId(joueur.GetPseudo());
+			
 			stmt = connec.createStatement();
+			String insertion = "Insert into Joueur(num_joueur_PK, solde) values (" + id + ", '" + joueur.GetSolde() + "');";
+			//String insertion = "Insert into Joueur(num_joueur_PK, solde) values ((\"SELECT num_pers_PK from personne WHERE pseudo='" + joueur.GetPseudo() + "'\")" + ", '" + joueur.GetSolde() + "');";
 			
-			String insertion = "Insert into Joueur(num_joueur_PK, solde) values ((SELECT num_pers_PK from personne WHERE pseudo='" + joueur.GetPseudo() + "')" + ", '" + joueur.GetSolde() + "');";
 			int res = stmt.executeUpdate(insertion);
-			
+
 			if(res == 1) //Cree
 			{
 				return true;
 			}
 		}
-		catch(Exception err)
-		{
-			System.out.println(err);
-		}
-		
-		return false;
-	}
-
-	public Joueur verif(String pseudo, String mp){
-		Joueur joueur = new Joueur();
-		try
-		{
-			stmt = connec.createStatement();
-			
-			String verif = "SELECT Personne.*, Joueur.* FROM Personne INNER JOIN Joueur ON Personne.num_pers_PK = Joueur.num_joueur_PK where Personne.pseudo = '" + pseudo + "' and Personne.mp = '" + mp +"';";
-			res = stmt.executeQuery(verif);			
-			
-			if(res.next()) //verif pri
-			{
-				joueur.SetId(res.getInt("Personne.num_pers_PK"));
-				joueur.SetPseudo(res.getString("Personne.pseudo"));
-				joueur.SetNom(res.getString("Personne.nom"));
-				joueur.SetPrenom(res.getString("Personne.prenom"));
-				joueur.SetAge(res.getInt("Personne.age"));
-				joueur.SetAdresse(res.getString("Personne.adresse"));
-				joueur.SetSolde(res.getDouble("Joueur.solde"));
-			}			
-		}
 		catch(SQLException e){
 			e.printStackTrace();
 		}
-		return joueur;
-	}
+		
+		return false;
+	}	
 	
+	//Delete
 	public boolean delete(Joueur joueur){
 		try
 		{			
@@ -83,35 +58,19 @@ public class JoueurDAO extends DAO<Joueur>{
 				return true;
 			}
 		}
-		catch(Exception err)
-		{
-			System.out.println(err);
+		catch(SQLException e){
+			e.printStackTrace();
 		}
 		
 		return false;
 	}
 	
-	public boolean update(Joueur joueur){
-		try
-		{			
-			stmt = connec.createStatement();
-			
-			String upd = "update Joueur set solde = '" + joueur.GetSolde() + "where num_joueur_PK = '" + joueur.GetId() +"';";
-			res = stmt.executeQuery(upd);
-			
-			if(res.next()) //update ok
-			{
-				return true;
-			}
-		}
-		catch(Exception err)
-		{
-			System.out.println(err);
-		}
-		
+	//Update
+	public boolean update(Joueur joueur){		
 		return false;
 	}
 	
+	//Update solde
 	public boolean updatesolde(Joueur joueur){
 		try
 		{	
@@ -127,29 +86,33 @@ public class JoueurDAO extends DAO<Joueur>{
 				return true;
 			}
 		}
-		catch(Exception err)
-		{
-			System.out.println(err);
+		catch(SQLException e){
+			e.printStackTrace();
 		}
 		
 		return false;
 	}
 	
-	public Joueur find(String pseudo){
+	//Verif
+	public Joueur verif(String pseudo, String mp){
 		Joueur joueur = new Joueur();
 		try
 		{
-			PersonneDAO pers = new PersonneDAO();
-			int id = pers.findId(pseudo);
 			stmt = connec.createStatement();
 			
-			String find = "SELECT * FROM Joueur WHERE num_joueur_PK = '" + id +"';";
-			res = stmt.executeQuery(find);
+			String verif = "SELECT Personne.*, Joueur.* FROM Personne INNER JOIN Joueur ON Personne.num_pers_PK = Joueur.num_joueur_PK where Personne.pseudo = '" + pseudo + "' and Personne.mp = '" + mp +"';";
+			res = stmt.executeQuery(verif);			
 			
-			if(res.first()) //update ok
+			if(res.next()) //verif ok
 			{
-				//pers = new Joueur(res.getString("pseudo"), res.getString("mp"), res.getString("nom"), res.getString("prenom"), res.getInt("age"), res.getString("adresse"));
-			}
+				joueur.SetId(res.getInt("Personne.num_pers_PK"));
+				joueur.SetPseudo(res.getString("Personne.pseudo"));
+				joueur.SetNom(res.getString("Personne.nom"));
+				joueur.SetPrenom(res.getString("Personne.prenom"));
+				joueur.SetAge(res.getInt("Personne.age"));
+				joueur.SetAdresse(res.getString("Personne.adresse"));
+				joueur.SetSolde(res.getInt("Joueur.solde"));
+			}			
 		}
 		catch(SQLException e){
 			e.printStackTrace();
@@ -157,6 +120,7 @@ public class JoueurDAO extends DAO<Joueur>{
 		return joueur;
 	}
 	
+	//List
 	public List<Joueur> list(){
 		List<Joueur> list = new ArrayList<Joueur>();
 		try
@@ -168,12 +132,11 @@ public class JoueurDAO extends DAO<Joueur>{
 			
 			while(res.next()) //verif pri
 			{
-				list.add(new Joueur(res.getDouble("Joueur.solde"), res.getInt("Personne.num_pers_PK"), res.getString("Personne.pseudo"), res.getString("Personne.mp"), res.getString("Personne.nom"), res.getString("Personne.prenom"), res.getInt("Personne.age"), res.getString("Personne.adresse")));
+				list.add(new Joueur(res.getInt("Joueur.solde"), res.getInt("Personne.num_pers_PK"), res.getString("Personne.pseudo"), res.getString("Personne.mp"), res.getString("Personne.nom"), res.getString("Personne.prenom"), res.getInt("Personne.age"), res.getString("Personne.adresse")));
 			}
 		}
-		catch(Exception err)
-		{
-			System.out.println(err);
+		catch(SQLException e){
+			e.printStackTrace();
 		}
 		
 		return list;

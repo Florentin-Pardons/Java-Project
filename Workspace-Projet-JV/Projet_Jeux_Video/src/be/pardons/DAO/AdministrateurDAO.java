@@ -19,32 +19,58 @@ public class AdministrateurDAO extends DAO<Administrateur> {
 		super(connec);
 	}
 	
-	public AdministrateurDAO(Connection conn){
-		super(conn);
-	}
-	
-	public boolean create(Administrateur joueur){		
+	//Creer
+	public boolean create(Administrateur admin){		
 		try
 		{
 			PersonneDAO pers = new PersonneDAO();
-			int id = pers.findId(joueur.GetPseudo());
+			int id = pers.findId(admin.GetPseudo());
 			
 			stmt = connec.createStatement();
+			String insertion = "Insert into Administrateur(num_admin_PK) values (" + id + ");";
 			
-			String insertion = "Insert into Admin(num_pers_FK) values ('" + id + "');";
-			res = stmt.executeQuery(insertion);
-			if(res.next()) //Cree
+			int res = stmt.executeUpdate(insertion);
+
+			if(res == 1) //Cree
 			{
 				return true;
 			}
 		}
-		catch(Exception err)
-		{
-			System.out.println(err);
+		catch(SQLException e){
+			e.printStackTrace();
 		}
 		
 		return false;
 	}
+	
+	//Delete
+	public boolean delete(Administrateur admin){
+		try
+		{						
+			stmt = connec.createStatement();
+			
+			String del = "delete from Administrateur where num_admin_PK = '" + admin.GetId() + "';";
+			
+			int res = stmt.executeUpdate(del);
+			
+			if(res == 1) //del ok
+			{
+				return true;
+			}
+		}
+		catch(SQLException e){
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
+	
+	//Update
+	public boolean update(Administrateur admin){		
+		return false;
+	}
+	
+	//Verif
 	public Administrateur verif(String pseudo, String mp){
 		Administrateur admin = new Administrateur();
 		try
@@ -70,83 +96,14 @@ public class AdministrateurDAO extends DAO<Administrateur> {
 		return admin;
 	}
 	
-	public boolean delete(Administrateur admin){
-		try
-		{
-			PersonneDAO pers = new PersonneDAO();
-			int id = pers.findId(admin.GetPseudo());
-			
-			stmt = connec.createStatement();
-			
-			String del = "delete from Joueur where num_pers_FK = '" + id + "';";
-			res = stmt.executeQuery(del);
-			
-			if(res.next()) //del ok
-			{
-				return true;
-			}
-		}
-		catch(Exception err)
-		{
-			System.out.println(err);
-		}
-		
-		return false;
-	}
-	
-	public boolean update(Administrateur admin){
-		try
-		{
-			PersonneDAO pers = new PersonneDAO();
-			int id = pers.findId(admin.GetPseudo());
-			
-			stmt = connec.createStatement();
-			
-			String upd = "update Joueur set solde = '" + admin + "where num_pers_FK = '" + id +"';";
-			res = stmt.executeQuery(upd);
-			
-			if(res.next()) //update ok
-			{
-				return true;
-			}
-		}
-		catch(Exception err)
-		{
-			System.out.println(err);
-		}
-		
-		return false;
-	}
-	
-	public Administrateur find(String pseudo){
-		Administrateur admin = new Administrateur();
-		try
-		{
-			PersonneDAO pers = new PersonneDAO();
-			int id = pers.findId(pseudo);
-			stmt = connec.createStatement();
-			
-			String find = "SELECT * FROM Joueur WHERE num_pers_FK = '" + id +"';";
-			res = stmt.executeQuery(find);
-			
-			if(res.first()) //update ok
-			{
-				//pers = new Joueur(res.getString("pseudo"), res.getString("mp"), res.getString("nom"), res.getString("prenom"), res.getInt("age"), res.getString("adresse"));
-			}
-		}
-		catch(SQLException e){
-			e.printStackTrace();
-		}
-		return admin;
-	}
-	
+	//List
 	public List<Administrateur> list(){
 		List<Administrateur> list = new ArrayList<Administrateur>();
 		try
 		{
 			stmt = connec.createStatement();
 			
-			String result = "SELECT Administrateur.solde, Personne.* FROM Personne INNER JOIN Administrateur ON Personne.num_pers_PK = Administrateur.num_admin_PK;";
+			String result = "SELECT Personne.* FROM Personne INNER JOIN Administrateur ON Personne.num_pers_PK = Administrateur.num_admin_PK;";
 			res = stmt.executeQuery(result);
 			
 			while(res.next()) //verif pri
@@ -154,9 +111,8 @@ public class AdministrateurDAO extends DAO<Administrateur> {
 				list.add(new Administrateur(res.getInt("Personne.num_pers_PK"), res.getString("Personne.pseudo"), res.getString("Personne.mp"), res.getString("Personne.nom"), res.getString("Personne.prenom"), res.getInt("Personne.age"), res.getString("Personne.adresse")));
 			}
 		}
-		catch(Exception err)
-		{
-			System.out.println(err);
+		catch(SQLException e){
+			e.printStackTrace();
 		}
 		
 		return list;
