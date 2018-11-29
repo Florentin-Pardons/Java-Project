@@ -51,7 +51,7 @@ public class Jeu_Gestion extends JFrame {
 	            public void mouseClicked(java.awt.event.MouseEvent event) {
 	            	if (event.getClickCount() == 2) {
 	            		Jeu jeu = list.getSelectedValue();
-	            		JOptionPane.showMessageDialog(rootPane, jeu.toString(), "Information Jeu : ", JOptionPane.INFORMATION_MESSAGE);
+	            		JOptionPane.showMessageDialog(rootPane, jeu.message(), "Information Jeu : ", JOptionPane.INFORMATION_MESSAGE);
 	            	  }
 	            }
 	        });	
@@ -77,9 +77,15 @@ public class Jeu_Gestion extends JFrame {
 		btnModifierJeu = new JButton("Modifier");
 		btnModifierJeu.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				Jeu_Modifier p = new Jeu_Modifier(admin, list.getSelectedValue());
-				p.setVisible(true);
-				dispose();
+				Jeu j = list.getSelectedValue();
+				if(j != null)
+				{
+					Jeu_Modifier p = new Jeu_Modifier(admin, list.getSelectedValue());
+					p.setVisible(true);
+					dispose();
+				}
+				else
+					JOptionPane.showMessageDialog(rootPane, "Aucun jeu selectionné", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 			}
 		});
 		btnModifierJeu.setBounds(163, 187, 100, 23);
@@ -87,7 +93,6 @@ public class Jeu_Gestion extends JFrame {
 		
 		//btn supprimer
 		btnSupprimerJeu = new JButton("Supprimer");
-		btnSupprimerJeu.setEnabled(false);
 		btnSupprimerJeu.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				Jeu jeu = list.getSelectedValue();
@@ -96,10 +101,14 @@ public class Jeu_Gestion extends JFrame {
 				{
 					try
 					{
-						jeu.Delete();
-						Jeu_Gestion p = new Jeu_Gestion(admin);
-						p.setVisible(true);
-						dispose();
+						if(jeu.Delete() == true)
+						{
+							Jeu_Gestion p = new Jeu_Gestion(admin);
+							p.setVisible(true);
+							dispose();
+						}
+						else
+							JOptionPane.showMessageDialog(rootPane, "Erreur system : echec delete", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 					}
 					catch(Exception err)
 					{
@@ -107,7 +116,7 @@ public class Jeu_Gestion extends JFrame {
 					}
 				}
 				else
-					System.out.println("ereur");
+					JOptionPane.showMessageDialog(rootPane, "Aucun jeu selectionné", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 			}
 		});
 		btnSupprimerJeu.setBounds(302, 187, 100, 23);
