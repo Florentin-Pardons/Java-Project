@@ -7,6 +7,7 @@ import be.pardons.POJO.Joueur;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -87,7 +88,7 @@ public class Inscription extends JFrame {
 		
 		//lbl adresse
 		lblAdresse = new JLabel("Adresse");
-		lblAdresse.setBounds(22, 152, 46, 14);
+		lblAdresse.setBounds(22, 152, 62, 14);
 		contentPane.add(lblAdresse);
 		
 		//txt adresse
@@ -109,7 +110,7 @@ public class Inscription extends JFrame {
 		
 		//lbl mp1
 		lblMp2 = new JLabel("Mot de passe confirmation");
-		lblMp2.setBounds(222, 90, 135, 14);
+		lblMp2.setBounds(222, 90, 155, 14);
 		contentPane.add(lblMp2);
 		
 		//txt mp2
@@ -143,69 +144,39 @@ public class Inscription extends JFrame {
 				String mdp1 = txtMp1.getText().toString();
 				String mdp2 = txtMp2.getText().toString();
 				
-				if(!pseudo.isEmpty() && !nom.isEmpty() && !prenom.isEmpty() && !age.isEmpty() && !adresse.isEmpty() && !mdp1.isEmpty() && !mdp2.isEmpty() && mdp1.equals(mdp2))
+				if(!pseudo.isEmpty() && !nom.isEmpty() && !prenom.isEmpty() && !age.isEmpty() && Integer.parseInt(age) > 0 && !adresse.isEmpty() && !mdp1.isEmpty() && !mdp2.isEmpty())
 				{
-					/*try
+					if(mdp1.equals(mdp2))
 					{
-						Connection connec = null;
-						Statement stmt = null;
-						ResultSet res = null;
-						
-						String url = "jdbc:ucanaccess://./ProjetPartageJV.accdb";
-						connec = DriverManager.getConnection(url);
-						stmt = connec.createStatement();
-						
-						String verif = "select * from Eleve where userName = '" + pseudo + "';";
-						res = stmt.executeQuery(verif);
-						
-						if(res.next())
-						{
-							JOptionPane.showMessageDialog(null, "Le pseudonyme "+pseudo+" est déjà pris.");
-						}
-						else
-						{
-							String insertion="Insert into Personne(pseudo, mp) values ('" + pseudo.toString()+ "', '"+mdp1.toString()+"');";
-							stmt.executeUpdate(insertion);
-							
-							Connexion c = new Connexion();
-							c.setVisible(true);
-							dispose();
-						}
-					}
-					catch(Exception err)
-					{
-						System.out.println(err);
-					}
-				}	*/
-					try
-					{
-						/*
-						Personne pers = new Personne(pseudo, mdp1, nom, prenom, Integer.parseInt(age), adresse);
-						if(pers.Verif() == false) {
-							if(pers.Creer() == true){
-								Connexion c = new Connexion();
-								c.setVisible(true);
-								dispose();
+						try
+						{						
+							Joueur joueur = new Joueur(pseudo, mdp1, nom, prenom, Integer.parseInt(age), adresse);
+							if(joueur.Verif() == false) {
+								if(joueur.Creer() == true){
+									JOptionPane.showMessageDialog(rootPane, "Inscription Reussie", "Information : ", JOptionPane.INFORMATION_MESSAGE);
+									Connexion c = new Connexion();
+									c.setVisible(true);
+									dispose();
+								}
+								else
+									JOptionPane.showMessageDialog(rootPane, "Probleme systeme", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 							}
-						}*/
-						
-						Joueur joueur = new Joueur(pseudo, mdp1, nom, prenom, Integer.parseInt(age), adresse);
-						if(joueur.Verif() == false) {
-							if(joueur.Creer() == true){
-								Connexion c = new Connexion();
-								c.setVisible(true);
-								dispose();
-							}
+							else
+								JOptionPane.showMessageDialog(rootPane, "Pseudo déjà existant", "Erreur : ", JOptionPane.ERROR_MESSAGE);
+						}
+						catch(Exception err)
+						{
+							System.out.println(err);
 						}
 					}
-					catch(Exception err)
-					{
-						System.out.println(err);
-					}
+					else
+						JOptionPane.showMessageDialog(rootPane, "Les 2 mots de passes ne sont pas identiques", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 				}
+				else
+					JOptionPane.showMessageDialog(rootPane, "Erreur d'encodage dans le formulaire", "Erreur : ", JOptionPane.ERROR_MESSAGE);
 			}
 		});
-		btnEnregister.setBounds(255, 196, 89, 23);
+		btnEnregister.setBounds(255, 196, 100, 23);
 		contentPane.add(btnEnregister);
 	}
 }
